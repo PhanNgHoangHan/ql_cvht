@@ -16,8 +16,12 @@ body {
     background: linear-gradient(180deg, #5680E9, #8860D0);
     color: white;
     padding: 20px;
+
+    display: flex;
+    flex-direction: column;
 }
 
+/* Logo */
 .sidebar-logo {
     display: flex;
     align-items: center;
@@ -31,9 +35,15 @@ body {
     width: 40px;
 }
 
+/* Menu */
 .sidebar-menu {
     list-style: none;
     padding: 0;
+    margin: 0;
+    color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    flex: 1; /* chiếm toàn bộ chiều cao còn lại */
 }
 
 .sidebar-menu li {
@@ -47,9 +57,18 @@ body {
     background: rgba(255,255,255,0.2);
 }
 
+.sidebar-menu .sinhvien {
+       /* 🔥 đẩy xuống đáy */
+    color: #ffffff;
+}
+.sidebar-menu .active {
+       /* 🔥 đẩy xuống đáy */
+    color: #ffffff;
+}
+/* Logout */
 .sidebar-menu .logout {
-    margin-top: 30px;
-    color: #FFDADA;
+       /* 🔥 đẩy xuống đáy */
+    color: #ffffff;
 }
 
 /* Main */

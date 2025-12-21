@@ -12,28 +12,21 @@ class CoVan(models.Model):
     ho_ten = models.CharField(max_length=100)
     email = models.EmailField()
     dien_thoai = models.CharField(max_length=15)
+
     khoa = models.ForeignKey(
         Khoa,
         on_delete=models.CASCADE,
         related_name='ds_covan'
     )
 
+    lop = models.OneToOneField(   # 🔥 mỗi lớp chỉ 1 cố vấn
+        Lop,
+        on_delete=models.CASCADE,
+        related_name='covan'
+    )
+
     class Meta:
         db_table = 'co_van'
 
     def __str__(self):
-        return self.ho_ten
-
-
-class PhanCongCoVan(models.Model):
-    covan = models.ForeignKey(CoVan, on_delete=models.CASCADE)
-    lop = models.ForeignKey(Lop, on_delete=models.CASCADE)
-    nam_hoc = models.CharField(max_length=9)
-    hoc_ky = models.IntegerField()
-
-    class Meta:
-        db_table = 'phan_cong_cv'
-        unique_together = ('covan', 'lop', 'nam_hoc', 'hoc_ky')
-
-    def __str__(self):
-        return f"{self.covan} - {self.lop}"
+        return f"{self.ho_ten} - {self.lop}"

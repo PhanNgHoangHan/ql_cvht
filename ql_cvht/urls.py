@@ -17,7 +17,8 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from django.shortcuts import redirect
-from ql_cvht.views import home_view
+from cvht.views import home_view 
+from sinhvien.views import sinhvien_list_view
 
 def home(request):
     return redirect('login')
@@ -25,10 +26,12 @@ def home(request):
 urlpatterns = [
     path('', home),                 # 👈 ROOT → LOGIN
     path('admin/', admin.site.urls),
-    path('login/', include('accounts.urls')),
+    path('', include('accounts.urls')),
     path('logout/', include('accounts.urls')),
     path('sinhvien/', include('sinhvien.urls')),
     path('covan/', include('covan.urls')),
     path('dashboard/', home_view, name='dashboard'),
+    path('sinhvien/', sinhvien_list_view, name='sinhvien'),
+
 ]
 
