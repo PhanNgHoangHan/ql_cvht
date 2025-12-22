@@ -42,7 +42,6 @@ class KetQuaMonHoc(models.Model):
     sinh_vien = models.ForeignKey(SinhVien, on_delete=models.CASCADE)
     mon_hoc = models.ForeignKey(MonHoc, on_delete=models.CASCADE)
     hoc_ky = models.ForeignKey(HocKy, on_delete=models.CASCADE)
-
     diem_qua_trinh = models.FloatField()
     diem_thi = models.FloatField()
     diem_tong_ket = models.FloatField()

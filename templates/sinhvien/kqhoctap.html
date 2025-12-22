@@ -27,7 +27,7 @@
             <a href="{% url 'dashboard' %}" class="active">Trang chủ</a>
 
             </li>
-        <li>Sinh viên</li>
+        <li><a href="{% url 'sinhvien' %}" class="sinhvien">Sinh viên</a></li>
         <li>Lịch tư vấn</li>
         <li>Thông báo</li>
         <li>Thống kê</li>
@@ -69,44 +69,50 @@
         </div>
     </div>
 </div>
+<div class="content-box mt-4">
 
+    <div class="d-flex align-items-center gap-3 mb-3">
+        <a href="javascript:history.back()" class="btn btn-outline-secondary btn-sm">
+            ← Quay lại
+        </a>
+        <h5 class="mb-0">Kết quả các môn học</h5>
+    </div>
 
-<div class="content-box">
-    <h5 class="mb-3">
-        Danh sách sinh viên
-        {% if lop %}
-            - Lớp {{ lop.ten_lop }}
-        {% endif %}
-    </h5>
+    <p class="text-muted mb-3">
+        Sinh viên: <strong>{{ sinhvien.ho_ten }}</strong> ({{ sinhvien.ma_sv }})
+    </p>
 
     <table class="table table-hover align-middle">
         <thead class="table-light">
             <tr>
-                <th>Mã SV</th>
-                <th>Họ tên</th>
-                <th>Email</th>
-                <th>Điện thoại</th>
-                <th class="text-end">Thao tác</th>
+                <th>Môn học</th>
+                <th>Học kỳ</th>
+                <th>Điểm quá trình</th>
+                <th>Điểm thi</th>
+                <th>Điểm tổng kết</th>
+                <th>Kết quả</th>
             </tr>
         </thead>
         <tbody>
-            {% for sv in sinhviens %}
+            {% for kq in KetQuaMonHoc %}
             <tr>
-                <td>{{ sv.ma_sv }}</td>
-                <td>{{ sv.ho_ten }}</td>
-                <td>{{ sv.email }}</td>
-                <td>{{ sv.dien_thoai }}</td>
-                <td class="text-end">
-                    <a href="{% url 'sinhvien_detail' sv.id %}"
-                       class="btn btn-sm btn-primary">
-                        Xem chi tiết
-                    </a>
+                <td>{{ kq.mon_hoc.ten_mon }}</td>
+                <td>{{ kq.hoc_ky.ten_hoc_ky }}</td>
+                <td>{{ kq.diem_qua_trinh }}</td>
+                <td>{{ kq.diem_thi }}</td>
+                <td>{{ kq.diem_tong_ket }}</td>
+                <td>
+                    {% if kq.ket_qua == "Đạt" %}
+                        <span class="badge bg-success">Đạt</span>
+                    {% else %}
+                        <span class="badge bg-danger">Chưa đạt</span>
+                    {% endif %}
                 </td>
             </tr>
             {% empty %}
             <tr>
-                <td colspan="5" class="text-center text-muted">
-                    Không có sinh viên
+                <td colspan="6" class="text-center text-muted">
+                    Chưa có dữ liệu kết quả học tập
                 </td>
             </tr>
             {% endfor %}

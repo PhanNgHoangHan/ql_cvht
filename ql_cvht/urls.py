@@ -32,6 +32,8 @@ urlpatterns = [
     path('covan/', include('covan.urls')),
     path('dashboard/', home_view, name='dashboard'),
     path('sinhvien/', sinhvien_list_view, name='sinhvien'),
+    path('sinhvien/', include('sinhvien.urls')),
+
 
 ]
 
