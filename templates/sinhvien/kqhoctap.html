@@ -69,14 +69,44 @@
         </div>
     </div>
 </div>
+
+
 <div class="content-box mt-4">
 
-    <div class="d-flex align-items-center gap-3 mb-3">
-        <a href="javascript:history.back()" class="btn btn-outline-secondary btn-sm">
+    <div class="d-flex align-items-center justify-content-between mb-3">
+    <div class="d-flex align-items-center gap-3">
+        <a href="{% url 'sinhvien' %}" class="btn btn-outline-secondary btn-sm">
             ← Quay lại
         </a>
         <h5 class="mb-0">Kết quả các môn học</h5>
     </div>
+
+    <!-- 🔍 FORM LỌC -->
+    <form method="get" class="d-flex gap-2">
+        <!-- Lọc học kỳ -->
+        <select name="hoc_ky" class="form-select form-select-sm">
+            <option value="">-- Tất cả học kỳ --</option>
+            {% for hk in hoc_kys %}
+                <option value="{{ hk.id }}"
+                    {% if hk.id|stringformat:"s" == selected_hoc_ky %}selected{% endif %}>
+                    {{ hk }}
+                </option>
+            {% endfor %}
+        </select>
+
+        <!-- Lọc kết quả -->
+        <select name="ket_qua" class="form-select form-select-sm">
+            <option value="">-- Tất cả kết quả --</option>
+            <option value="Đạt" {% if selected_ket_qua == "Đạt" %}selected{% endif %}>Đạt</option>
+            <option value="Chưa đạt" {% if selected_ket_qua == "Chưa đạt" %}selected{% endif %}>Chưa đạt</option>
+        </select>
+
+        <button type="submit" class="btn btn-sm btn-primary">
+            Lọc
+        </button>
+    </form>
+</div>
+
 
     <p class="text-muted mb-3">
         Sinh viên: <strong>{{ sinhvien.ho_ten }}</strong> ({{ sinhvien.ma_sv }})
@@ -87,6 +117,7 @@
             <tr>
                 <th>Môn học</th>
                 <th>Học kỳ</th>
+                <th>Số tín chỉ</th>
                 <th>Điểm quá trình</th>
                 <th>Điểm thi</th>
                 <th>Điểm tổng kết</th>
@@ -94,10 +125,11 @@
             </tr>
         </thead>
         <tbody>
-            {% for kq in KetQuaMonHoc %}
+            {% for kq in mon_hoc %}
             <tr>
                 <td>{{ kq.mon_hoc.ten_mon }}</td>
-                <td>{{ kq.hoc_ky.ten_hoc_ky }}</td>
+                <td>{{ kq.hoc_ky }}</td>
+                <td>{{ kq.mon_hoc.so_tin_chi }}</td>
                 <td>{{ kq.diem_qua_trinh }}</td>
                 <td>{{ kq.diem_thi }}</td>
                 <td>{{ kq.diem_tong_ket }}</td>
