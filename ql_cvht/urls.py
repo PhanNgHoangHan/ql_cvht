@@ -1,39 +1,24 @@
-"""
-URL configuration for ql_cvht project.
-
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/5.1/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
-"""
 from django.contrib import admin
 from django.urls import path, include
 from django.shortcuts import redirect
-from cvht.views import home_view 
-from sinhvien.views import sinhvien_list_view
+from django.conf import settings
+from django.conf.urls.static import static
+from cvht.views import home_view
 
 def home(request):
     return redirect('login')
 
 urlpatterns = [
-    path('', home),                 # 👈 ROOT → LOGIN
+    path('', home),
     path('admin/', admin.site.urls),
+    
     path('', include('accounts.urls')),
-    path('logout/', include('accounts.urls')),
     path('sinhvien/', include('sinhvien.urls')),
     path('covan/', include('covan.urls')),
+    path('tuvantuvan/', include('tuvantuvan.urls')),
     path('dashboard/', home_view, name='dashboard'),
-    path('sinhvien/', sinhvien_list_view, name='sinhvien'),
-    path('sinhvien/', include('sinhvien.urls')),
-
-
 ]
 
+# Serve static files during development
+if settings.DEBUG:
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATICFILES_DIRS[0])

@@ -1,0 +1,142 @@
+{% extends 'base.html' %}
+
+{% block title %}Thống kê{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h2>Thống kê lớp {{ covan.lop.ten_lop }}</h2>
+    </div>
+</div>
+
+<div class="row mt-3">
+    <div class="col-md-4">
+        <form method="GET">
+            <div class="mb-3">
+                <label class="form-label">Chọn học kỳ:</label>
+                <select name="hoc_ky" class="form-select" onchange="this.form.submit()">
+                    <option value="all" {% if selected_hoc_ky == 'all' %}selected{% endif %}>Tất cả học kỳ</option>
+                    {% for hk in hoc_kys %}
+                    <option value="{{ hk.id }}" {% if selected_hoc_ky == hk.id|stringformat:"s" %}selected{% endif %}>
+                        {{ hk.nam_hoc }} - HK{{ hk.hoc_ky }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5>Biểu đồ kết quả học tập</h5>
+            </div>
+            <div class="card-body">
+                {% if sinh_vien_chua_dat > 0 or sinh_vien_dat_tat_ca > 0 %}
+                <canvas id="ketQuaChart" width="400" height="400"></canvas>
+                {% else %}
+                <div class="text-center text-muted">
+                    <p>Chưa có dữ liệu kết quả học tập</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5>Thống kê chi tiết</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-6">
+                        <div class="text-center">
+                            <h3 class="text-danger">{{ sinh_vien_chua_dat }}</h3>
+                            <p>SV có môn chưa đạt</p>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="text-center">
+                            <h3 class="text-success">{{ sinh_vien_dat_tat_ca }}</h3>
+                            <p>SV đạt toàn bộ môn</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <hr>
+                
+                <div class="text-center">
+                    <h4>{{ diem_danh_gia_tb }}/5</h4>
+                    <p>Điểm đánh giá trung bình</p>
+                </div>
+                
+                {% if debug_results %}
+                <hr>
+                <h6>Mẫu dữ liệu:</h6>
+                <div style="max-height: 150px; overflow-y: auto;">
+                    {% for result in debug_results %}
+                    <small class="d-block">
+                        {{ result.sinh_vien__ho_ten }} - {{ result.mon_hoc__ten_mon }}: "{{ result.ket_qua }}"
+                    </small>
+                    {% endfor %}
+                </div>
+                {% if unique_ket_qua %}
+                <small><strong>Các giá trị ket_qua trong DB:</strong> {{ unique_ket_qua|join:", " }}</small>
+                {% endif %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12">
+        <a href="{% url 'covan:bao_cao' %}" class="btn btn-primary">Xuất báo cáo chi tiết</a>
+    </div>
+</div>
+
+{% if sinh_vien_chua_dat > 0 or sinh_vien_dat_tat_ca > 0 %}
+<script>
+const ctx = document.getElementById('ketQuaChart').getContext('2d');
+const chartData = {{ chart_data|safe }};
+
+// Đảm bảo có dữ liệu để hiển thị
+if (chartData.data.some(value => value > 0)) {
+    new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: chartData.labels,
+            datasets: [{
+                data: chartData.data,
+                backgroundColor: chartData.backgroundColor
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            const label = context.label || '';
+                            const value = context.parsed;
+                            const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                            const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
+                            return `${label}: ${value} sinh viên (${percentage}%)`;
+                        }
+                    }
+                }
+            }
+        }
+    });
+} else {
+    document.getElementById('ketQuaChart').style.display = 'none';
+}
+</script>
+{% endif %}
+{% endblock %}

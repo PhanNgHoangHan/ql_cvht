@@ -1,156 +1,91 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <title>Sinh viên</title>
+{% extends 'base.html' %}
 
-    <!-- Bootstrap -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+{% block title %}Kết quả học tập{% endblock %}
 
-    <!-- CSS -->
-    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
-</head>
-<body>
-
-<div class="dashboard-wrapper">
-
-    <!-- SIDEBAR -->
-    <aside class="sidebar">
-        <div class="sidebar-logo">
-           <!-- <img src="{% static 'img/logo.png' %}" alt="Logo">-->
-            <span>QUẢN LÝ HOẠT ĐỘNG CỐ VẤN HỌC TẬP</span>
-        </div>
-
-       <ul class="sidebar-menu">
-        <li>
-            <a href="{% url 'dashboard' %}" class="active">Trang chủ</a>
-
-            </li>
-        <li><a href="{% url 'sinhvien' %}" class="sinhvien">Sinh viên</a></li>
-        <li>Lịch tư vấn</li>
-        <li>Thông báo</li>
-        <li>Thống kê</li>
-        <li><a href="{% url 'logout' %}" class="logout">Đăng xuất</a></li>
-        </ul>
-
-    </aside>
-
-    <!-- MAIN -->
-    <main class="main-content">
-<header class="main-header">
-    <div></div> <!-- giữ layout cân 2 bên -->
-    <div class="user-box">
-        <span>Xin chào, {{ request.user.get_full_name|default:request.user.username }}</span>
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h2>Kết quả học tập - {{ sinhvien.ho_ten }}</h2>
     </div>
-</header>
+</div>
 
-
-        <!-- STATS -->
-       <div class="row g-4 mb-4">
-    <div class="col-md-4">
-        <div class="stat-card blue">
-            <h6>Sinh viên</h6>
-            <h3>320</h3>
-        </div>
+<div class="row mt-3">
+    <div class="col-md-6">
+        <form method="GET" class="mb-3">
+            <div class="row">
+                <div class="col-md-6">
+                    <select name="hoc_ky" class="form-select" onchange="this.form.submit()">
+                        <option value="">Tất cả học kỳ</option>
+                        {% for hk in hoc_kys %}
+                        <option value="{{ hk.id }}" {% if selected_hoc_ky == hk.id|stringformat:"s" %}selected{% endif %}>
+                            {{ hk.nam_hoc }} - HK{{ hk.hoc_ky }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <select name="ket_qua" class="form-select" onchange="this.form.submit()">
+                        <option value="">Tất cả kết quả</option>
+                        <option value="Đạt" {% if selected_ket_qua == 'Đạt' %}selected{% endif %}>Đạt</option>
+                        <option value="Chưa Đạt" {% if selected_ket_qua == 'Chưa Đạt' %}selected{% endif %}>Chưa Đạt</option>
+                    </select>
+                </div>
+            </div>
+        </form>
     </div>
+</div>
 
-    <div class="col-md-4">
-        <div class="stat-card purple">
-            <h6>Lịch tư vấn</h6>
-            <h3>58</h3>
-        </div>
-    </div>
-
-    <div class="col-md-4">
-        <div class="stat-card light">
-            <h6>Thông báo</h6>
-            <h3>12</h3>
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5>Kết quả các môn học</h5>
+            </div>
+            <div class="card-body">
+                {% if mon_hoc %}
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Môn học</th>
+                                <th>Học kỳ</th>
+                                <th>Số tín chỉ</th>
+                                <th>Điểm QT</th>
+                                <th>Điểm thi</th>
+                                <th>Điểm TK</th>
+                                <th>Kết quả</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for mh in mon_hoc %}
+                            <tr>
+                                <td>{{ mh.mon_hoc.ten_mon }}</td>
+                                <td>{{ mh.hoc_ky.nam_hoc }} - HK{{ mh.hoc_ky.hoc_ky }}</td>
+                                <td>{{ mh.mon_hoc.so_tin_chi }}</td>
+                                <td>{{ mh.diem_qua_trinh }}</td>
+                                <td>{{ mh.diem_thi }}</td>
+                                <td>{{ mh.diem_tong_ket }}</td>
+                                <td>
+                                    <span class="badge {% if mh.ket_qua == 'Đạt' %}bg-success{% else %}bg-danger{% endif %}">
+                                        {{ mh.ket_qua }}
+                                    </span>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p class="text-muted">Không có kết quả học tập nào.</p>
+                {% endif %}
+            </div>
         </div>
     </div>
 </div>
 
-
-<div class="content-box mt-4">
-
-    <div class="d-flex align-items-center justify-content-between mb-3">
-    <div class="d-flex align-items-center gap-3">
-        <a href="{% url 'sinhvien' %}" class="btn btn-outline-secondary btn-sm">
-            ← Quay lại
-        </a>
-        <h5 class="mb-0">Kết quả các môn học</h5>
+<div class="row mt-3">
+    <div class="col-12">
+        <a href="{% url 'sinhvien:detail' sinhvien.pk %}" class="btn btn-secondary">Quay lại</a>
     </div>
-
-    <!-- 🔍 FORM LỌC -->
-    <form method="get" class="d-flex gap-2">
-        <!-- Lọc học kỳ -->
-        <select name="hoc_ky" class="form-select form-select-sm">
-            <option value="">-- Tất cả học kỳ --</option>
-            {% for hk in hoc_kys %}
-                <option value="{{ hk.id }}"
-                    {% if hk.id|stringformat:"s" == selected_hoc_ky %}selected{% endif %}>
-                    {{ hk }}
-                </option>
-            {% endfor %}
-        </select>
-
-        <!-- Lọc kết quả -->
-        <select name="ket_qua" class="form-select form-select-sm">
-            <option value="">-- Tất cả kết quả --</option>
-            <option value="Đạt" {% if selected_ket_qua == "Đạt" %}selected{% endif %}>Đạt</option>
-            <option value="Chưa đạt" {% if selected_ket_qua == "Chưa đạt" %}selected{% endif %}>Chưa đạt</option>
-        </select>
-
-        <button type="submit" class="btn btn-sm btn-primary">
-            Lọc
-        </button>
-    </form>
 </div>
-
-
-    <p class="text-muted mb-3">
-        Sinh viên: <strong>{{ sinhvien.ho_ten }}</strong> ({{ sinhvien.ma_sv }})
-    </p>
-
-    <table class="table table-hover align-middle">
-        <thead class="table-light">
-            <tr>
-                <th>Môn học</th>
-                <th>Học kỳ</th>
-                <th>Số tín chỉ</th>
-                <th>Điểm quá trình</th>
-                <th>Điểm thi</th>
-                <th>Điểm tổng kết</th>
-                <th>Kết quả</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for kq in mon_hoc %}
-            <tr>
-                <td>{{ kq.mon_hoc.ten_mon }}</td>
-                <td>{{ kq.hoc_ky }}</td>
-                <td>{{ kq.mon_hoc.so_tin_chi }}</td>
-                <td>{{ kq.diem_qua_trinh }}</td>
-                <td>{{ kq.diem_thi }}</td>
-                <td>{{ kq.diem_tong_ket }}</td>
-                <td>
-                    {% if kq.ket_qua == "Đạt" %}
-                        <span class="badge bg-success">Đạt</span>
-                    {% else %}
-                        <span class="badge bg-danger">Chưa đạt</span>
-                    {% endif %}
-                </td>
-            </tr>
-            {% empty %}
-            <tr>
-                <td colspan="6" class="text-center text-muted">
-                    Chưa có dữ liệu kết quả học tập
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</div>
-
-</body>
-</html>
+{% endblock %}

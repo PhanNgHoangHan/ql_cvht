@@ -18,15 +18,19 @@ class LichTuVan(models.Model):
 class PhieuTuVan(models.Model):
     sinh_vien = models.ForeignKey(SinhVien, on_delete=models.CASCADE)
     covan = models.ForeignKey(CoVan, on_delete=models.CASCADE)
+
+    lich_tu_van = models.ForeignKey(
+        LichTuVan,
+        on_delete=models.CASCADE,
+        related_name='phieu_tu_van'
+    )
+
     thoi_gian = models.DateTimeField()
     noi_dung_tu_van = models.TextField()
-    ket_qua = models.TextField()
+    ket_qua = models.TextField(blank=True)
 
     class Meta:
         db_table = 'phieu_tu_van'
-
-    def __str__(self):
-        return f"Phiếu {self.sinh_vien} - {self.covan}"
 
 
 class DanhGia(models.Model):

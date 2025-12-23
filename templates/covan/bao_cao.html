@@ -1,0 +1,316 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Báo cáo học tập{% endblock %}
+
+{% block page_title %}Báo cáo học tập{% endblock %}
+{% block page_subtitle %}Lớp {{ covan.lop.ten_lop }} - Trường {{ covan.khoa.ten_khoa }}{% endblock %}
+
+{% block page_actions %}
+<button type="button" class="btn btn-success no-print" onclick="window.print()">
+    <i class="bi bi-printer me-2"></i>In báo cáo
+</button>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+@media print {
+    .university-header {
+        border-bottom: 3px solid #000 !important;
+        margin-bottom: 30px !important;
+    }
+    
+    .report-info {
+        margin: 20px 0 !important;
+    }
+    
+    .signature-section {
+        margin-top: 50px !important;
+        page-break-inside: avoid;
+    }
+    
+    .table {
+        font-size: 12px !important;
+    }
+    
+    .table th, .table td {
+        padding: 8px 4px !important;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- University Header for Print -->
+<div class="university-header text-center">
+    <div class="row align-items-center">
+        <div class="col-2">
+            <img src="{% static 'images/tvu.png' %}" alt="TVU Logo" class="university-logo tvu-logo" 
+                 style="width: 80px; height: 80px;">
+        </div>
+        <div class="col-8">
+            <h4 class="university-name mb-1">TRƯỜNG ĐẠI HỌC TRÀ VINH</h4>
+            <h5 class="department-name mb-1">Trường {{ covan.khoa.ten_khoa }}</h5>
+            <p class="report-title mb-0">BÁO CÁO KẾT QUẢ HỌC TẬP VÀ RÈN LUYỆN</p>
+        </div>
+        <div class="col-2">
+            <!-- Space for additional logo or info -->
+        </div>
+    </div>
+</div>
+
+<!-- Report Information -->
+<div class="report-info">
+    <div class="row">
+        <div class="col-md-6">
+            <table class="table table-borderless">
+                <tr>
+                    <td width="120"><strong>Lớp:</strong></td>
+                    <td>{{ covan.lop.ten_lop }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Cố vấn:</strong></td>
+                    <td>{{ covan.ho_ten }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Khoa:</strong></td>
+                    <td>{{ covan.khoa.ten_khoa }}</td>
+                </tr>
+            </table>
+        </div>
+        <div class="col-md-6">
+            <table class="table table-borderless">
+                <tr>
+                    <td width="120"><strong>Học kỳ:</strong></td>
+                    <td>
+                        {% if selected_hoc_ky %}
+                            {% for hk in hoc_kys %}
+                                {% if hk.id|stringformat:"s" == selected_hoc_ky %}
+                                    {{ hk.nam_hoc }} - HK{{ hk.hoc_ky }}
+                                {% endif %}
+                            {% endfor %}
+                        {% elif selected_nam_hoc %}
+                            Năm học {{ selected_nam_hoc }}
+                        {% else %}
+                            Tất cả học kỳ
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <td><strong>Ngày lập:</strong></td>
+                    <td>{{ "now"|date:"d/m/Y" }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Số sinh viên:</strong></td>
+                    <td>{{ ket_qua|length }} sinh viên</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Filter Form (No Print) -->
+<div class="row mt-3 no-print">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-funnel me-2"></i>Bộ lọc báo cáo</h5>
+            </div>
+            <div class="card-body">
+                <form method="GET" class="row g-3">
+                    <div class="col-md-3">
+                        <label class="form-label">Học kỳ</label>
+                        <select name="hoc_ky" class="form-select">
+                            <option value="">Chọn học kỳ</option>
+                            {% for hk in hoc_kys %}
+                            <option value="{{ hk.id }}" {% if selected_hoc_ky == hk.id|stringformat:"s" %}selected{% endif %}>
+                                {{ hk.nam_hoc }} - HK{{ hk.hoc_ky }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Năm học</label>
+                        <select name="nam_hoc" class="form-select">
+                            <option value="">Chọn năm học</option>
+                            {% for nh in nam_hocs %}
+                            <option value="{{ nh }}" {% if selected_nam_hoc == nh %}selected{% endif %}>
+                                {{ nh }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-3 d-flex align-items-end">
+                        <button type="submit" class="btn btn-primary me-2">
+                            <i class="bi bi-search me-1"></i>Lọc
+                        </button>
+                        <a href="{% url 'covan:bao_cao' %}" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-clockwise me-1"></i>Reset
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Report Table -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-table me-2"></i>Bảng điểm chi tiết</h5>
+            </div>
+            <div class="card-body p-0">
+                {% if ket_qua %}
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th width="5%" class="text-center">STT</th>
+                                <th width="15%">Mã sinh viên</th>
+                                <th width="25%">Họ và tên</th>
+                                <th width="12%" class="text-center">Điểm HT</th>
+                                <th width="15%" class="text-center">Xếp loại HT</th>
+                                <th width="12%" class="text-center">Điểm RL</th>
+                                <th width="16%" class="text-center">Xếp loại RL</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for kq in ket_qua %}
+                            <tr>
+                                <td class="text-center">{{ forloop.counter }}</td>
+                                <td><strong>{{ kq.sinh_vien.ma_sv }}</strong></td>
+                                <td>{{ kq.sinh_vien.ho_ten }}</td>
+                                <td class="text-center">
+                                    {% if kq.diem_hoc_tap >= 3.6 %}
+                                        <span class="badge bg-success">{{ kq.diem_hoc_tap|floatformat:2 }}</span>
+                                    {% elif kq.diem_hoc_tap >= 3.2 %}
+                                        <span class="badge bg-info">{{ kq.diem_hoc_tap|floatformat:2 }}</span>
+                                    {% elif kq.diem_hoc_tap >= 2.5 %}
+                                        <span class="badge bg-primary">{{ kq.diem_hoc_tap|floatformat:2 }}</span>
+                                    {% elif kq.diem_hoc_tap >= 2.0 %}
+                                        <span class="badge bg-warning">{{ kq.diem_hoc_tap|floatformat:2 }}</span>
+                                    {% else %}
+                                        <span class="badge bg-danger">{{ kq.diem_hoc_tap|floatformat:2 }}</span>
+                                    {% endif %}
+                                </td>
+                                <td class="text-center">
+                                    {% if kq.xep_loai_ht == 'Xuất sắc' %}
+                                        <span class="badge bg-success">{{ kq.xep_loai_ht }}</span>
+                                    {% elif kq.xep_loai_ht == 'Giỏi' %}
+                                        <span class="badge bg-info">{{ kq.xep_loai_ht }}</span>
+                                    {% elif kq.xep_loai_ht == 'Khá' %}
+                                        <span class="badge bg-primary">{{ kq.xep_loai_ht }}</span>
+                                    {% elif kq.xep_loai_ht == 'Trung bình' %}
+                                        <span class="badge bg-warning">{{ kq.xep_loai_ht }}</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary">{{ kq.xep_loai_ht }}</span>
+                                    {% endif %}
+                                </td>
+                                <td class="text-center">
+                                    {% if kq.diem_ren_luyen >= 90 %}
+                                        <span class="badge bg-success">{{ kq.diem_ren_luyen }}</span>
+                                    {% elif kq.diem_ren_luyen >= 80 %}
+                                        <span class="badge bg-info">{{ kq.diem_ren_luyen }}</span>
+                                    {% elif kq.diem_ren_luyen >= 70 %}
+                                        <span class="badge bg-primary">{{ kq.diem_ren_luyen }}</span>
+                                    {% elif kq.diem_ren_luyen >= 60 %}
+                                        <span class="badge bg-warning">{{ kq.diem_ren_luyen }}</span>
+                                    {% else %}
+                                        <span class="badge bg-danger">{{ kq.diem_ren_luyen }}</span>
+                                    {% endif %}
+                                </td>
+                                <td class="text-center">
+                                    {% if kq.xep_loai_rl == 'Xuất sắc' %}
+                                        <span class="badge bg-success">{{ kq.xep_loai_rl }}</span>
+                                    {% elif kq.xep_loai_rl == 'Tốt' %}
+                                        <span class="badge bg-info">{{ kq.xep_loai_rl }}</span>
+                                    {% elif kq.xep_loai_rl == 'Khá' %}
+                                        <span class="badge bg-primary">{{ kq.xep_loai_rl }}</span>
+                                    {% elif kq.xep_loai_rl == 'Trung bình' %}
+                                        <span class="badge bg-warning">{{ kq.xep_loai_rl }}</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary">{{ kq.xep_loai_rl }}</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center py-5">
+                    <i class="bi bi-inbox text-muted" style="font-size: 3rem;"></i>
+                    <h5 class="text-muted mt-3">Không có dữ liệu báo cáo</h5>
+                    <p class="text-muted">Vui lòng chọn học kỳ hoặc năm học để xem báo cáo</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Summary Statistics -->
+{% if ket_qua %}
+<div class="row mt-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-graph-up me-2"></i>Thống kê học tập</h5>
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-6">
+                        <h3 class="text-success">100%</h3>
+                        <p class="text-muted mb-0">Tỷ lệ tham gia</p>
+                    </div>
+                    <div class="col-6">
+                        <h3 class="text-info">{{ ket_qua|length }}</h3>
+                        <p class="text-muted mb-0">Tổng sinh viên</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-award me-2"></i>Thống kê rèn luyện</h5>
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-6">
+                        <h3 class="text-warning">{{ count_rl_cao }}</h3>
+                        <p class="text-muted mb-0">Điểm RL ≥ 80</p>
+                    </div>
+                    <div class="col-6">
+                        <h3 class="text-primary">{{ diem_rl_tb }}</h3>
+                        <p class="text-muted mb-0">Điểm RL TB</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Signature Section for Print -->
+<div class="signature-section">
+    <div class="row mt-5">
+        <div class="col-md-6 text-center">
+            <p><strong>Cố vấn học tập</strong></p>
+            <p class="mt-5"><strong>{{ covan.ho_ten }}</strong></p>
+        </div>
+        <div class="col-md-6 text-center">
+            <p><strong>Hiệu trưởng</strong></p>
+            <p class="mt-5"><strong></strong></p>
+        </div>
+    </div>
+    
+    <div class="text-center mt-4">
+        <p><em>Ngày {{ "now"|date:"d" }} tháng {{ "now"|date:"m" }} năm {{ "now"|date:"Y" }}</em></p>
+    </div>
+</div>
+{% endblock %}

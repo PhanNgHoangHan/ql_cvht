@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block title %}Danh sách sinh viên{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h2>Danh sách sinh viên lớp {{ lop.ten_lop }}</h2>
+        <p class="text-muted">Cố vấn: {{ covan.ho_ten }}</p>
+    </div>
+</div>
+
+<div class="row mt-3">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                {% if sinhviens %}
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Mã SV</th>
+                                <th>Họ tên</th>
+                                <th>Email</th>
+                                <th>Điện thoại</th>
+                                <th>Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for sv in sinhviens %}
+                            <tr>
+                                <td>{{ sv.ma_sv }}</td>
+                                <td>{{ sv.ho_ten }}</td>
+                                <td>{{ sv.email }}</td>
+                                <td>{{ sv.dien_thoai }}</td>
+                                <td>
+                                    <a href="{% url 'sinhvien:detail' sv.pk %}" class="btn btn-sm btn-info">Chi tiết</a>
+                                    <a href="{% url 'sinhvien:ket_qua_hoc_tap' sv.pk %}" class="btn btn-sm btn-success">Kết quả HT</a>
+                                    <a href="{% url 'sinhvien:thong_ke' sv.pk %}" class="btn btn-sm btn-warning">Thống kê</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p class="text-muted">Không có sinh viên nào trong lớp.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

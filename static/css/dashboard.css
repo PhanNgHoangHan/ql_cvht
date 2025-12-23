@@ -57,6 +57,10 @@ body {
     background: rgba(255,255,255,0.2);
 }
 
+.sidebar-menu .lich_tu_van{
+    color: #ffffff;
+}
+
 .sidebar-menu .sinhvien {
        /* 🔥 đẩy xuống đáy */
     color: #ffffff;

@@ -15,10 +15,10 @@ def login_view(request):
 
             # Điều hướng theo group
             if user.groups.filter(name='SINH_VIEN').exists():
-                return redirect('sv_dashboard')
+                return redirect('sinhvien:dashboard')
 
             if user.groups.filter(name='CO_VAN').exists():
-                return redirect('cv_dashboard')
+                return redirect('covan:dashboard')
 
             return redirect('dashboard')
         else:
