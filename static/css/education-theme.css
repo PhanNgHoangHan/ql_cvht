@@ -387,6 +387,105 @@ body {
     }
 }
 
+/* Button group improvements */
+.btn-group-responsive {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.btn-group-responsive .btn {
+    white-space: nowrap;
+    min-width: auto;
+}
+
+/* Table action buttons */
+.table .btn-group-sm {
+    min-width: 120px;
+}
+
+.table .btn-group-sm .btn {
+    min-width: 32px;
+    padding: 0.25rem 0.5rem;
+    white-space: nowrap;
+}
+
+.table .btn-group-sm .btn i {
+    font-size: 0.875rem;
+}
+
+/* Responsive table actions */
+@media (max-width: 768px) {
+    .table .btn-group-sm {
+        min-width: auto;
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+    
+    .table .btn-group-sm .btn {
+        width: 100%;
+        min-width: 80px;
+        font-size: 0.75rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .btn-group-responsive {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .btn-group-responsive .btn {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+}
+
+/* Card improvements */
+.card {
+    transition: transform 0.2s ease-in-out;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+}
+
+/* Badge improvements */
+.badge.fs-6 {
+    font-size: 0.875rem !important;
+    padding: 0.5rem 1rem;
+}
+
+/* Table improvements */
+.table-hover tbody tr:hover {
+    background-color: rgba(var(--bs-primary-rgb), 0.05);
+}
+
+/* Empty state improvements */
+.empty-state {
+    padding: 3rem 1rem;
+    text-align: center;
+}
+
+.empty-state i {
+    font-size: 3rem;
+    opacity: 0.3;
+    margin-bottom: 1rem;
+}
+
+/* Responsive text */
+@media (max-width: 768px) {
+    .fw-bold {
+        font-size: 0.9rem;
+    }
+    
+    .form-label {
+        font-size: 0.8rem;
+        margin-bottom: 0.25rem;
+    }
+}
+
 /* University Header Area */
 .university-header {
     text-align: center;
