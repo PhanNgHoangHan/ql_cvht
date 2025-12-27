@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-&g-gedc#bln-tl)^=e_9)!-ck5(iiyie^p(b$+7@9lq3-kw9u!
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']  # Cho phép tất cả hosts trong Docker
 
 
 # Application definition
@@ -81,14 +81,16 @@ WSGI_APPLICATION = 'ql_cvht.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+import os
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'cvht_db',
-        'USER': 'root',
-        'PASSWORD': 'Nhanh1234@',
-        'HOST': '127.0.0.1',
-        'PORT': '3307',
+        'NAME': os.environ.get('DB_NAME', 'cvht_db'),
+        'USER': os.environ.get('DB_USER', 'cvht_user'),
+        'PASSWORD': os.environ.get('DB_PASSWORD', 'cvht_password'),
+        'HOST': os.environ.get('DB_HOST', '127.0.0.1'),
+        'PORT': os.environ.get('DB_PORT', '3307'),
         'OPTIONS': {
             'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
         },
