@@ -93,6 +93,10 @@
                             <i class="bi bi-person-circle me-1"></i>{{ user.username }}
                         </a>
                         <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{% url 'change_password' %}">
+                                <i class="bi bi-shield-lock me-2"></i>Thay đổi mật khẩu
+                            </a></li>
+                            <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item" href="{% url 'logout' %}">
                                 <i class="bi bi-box-arrow-right me-2"></i>Đăng xuất
                             </a></li>
@@ -156,7 +160,7 @@
                 </div>
                 <div class="col-md-6 text-end">
                     <p class="mb-0">© Copyright by HoangHan 2024 - Hệ thống quản lý hoạt động của Cố vấn Học tập</p>
-                    <small class="text-muted">Phiên bản 1.0</small>
+                    <small class="text-muted">Phiên bản 1.5</small>
                 </div>
             </div>
         </div>

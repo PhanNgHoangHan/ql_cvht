@@ -22,10 +22,12 @@
                     <strong>{{ phieu.sinh_vien.ho_ten }}</strong><br>
                     <small class="text-muted">{{ phieu.thoi_gian|date:"d/m/Y H:i" }}</small><br>
                     <p class="mb-1">{{ phieu.noi_dung_tu_van|truncatechars:100 }}</p>
-                    {% if not phieu.ket_qua %}
-                    <a href="{% url 'covan:phan_hoi' phieu.id %}" class="btn btn-sm btn-primary">Phản hồi</a>
-                    {% else %}
-                    <span class="badge bg-success">Đã phản hồi</span>
+                    {% if phieu.trang_thai == 'cho_phan_hoi' %}
+                        <a href="{% url 'covan:phan_hoi' phieu.id %}" class="btn btn-sm btn-primary">Phản hồi</a>
+                    {% elif phieu.trang_thai == 'da_phan_hoi' %}
+                        <span class="badge bg-success">Đã phản hồi</span>
+                    {% elif phieu.trang_thai == 'da_huy' %}
+                        <span class="badge bg-secondary">Đã hủy</span>
                     {% endif %}
                 </div>
                 {% endfor %}

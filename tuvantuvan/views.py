@@ -130,3 +130,25 @@ def tao_lich_tu_van(request):
             return redirect('covan:lich_tu_van')
     
     return render(request, 'tuvantuvan/tao_lich.html', {'covan': covan})
+
+@sinhvien_required
+def huy_lich_tu_van(request, phieu_id):
+    """Sinh viên hủy lịch tư vấn (chỉ khi chưa có phản hồi)"""
+    phieu = get_object_or_404(PhieuTuVan, id=phieu_id, sinh_vien=request.user.sinhvien)
+    
+    # Kiểm tra điều kiện hủy: chưa có phản hồi và trạng thái chờ phản hồi
+    if phieu.ket_qua or phieu.trang_thai != 'cho_phan_hoi':
+        messages.error(request, 'Không thể hủy lịch tư vấn này!')
+        return redirect('tuvantuvan:lich_tu_van_sinhvien')
+    
+    if request.method == 'POST':
+        phieu.trang_thai = 'da_huy'
+        phieu.save()
+        
+        messages.success(request, 'Đã hủy lịch tư vấn thành công!')
+        return redirect('tuvantuvan:lich_tu_van_sinhvien')
+    
+    context = {
+        'phieu': phieu
+    }
+    return render(request, 'tuvantuvan/huy_lich.html', context)

@@ -16,6 +16,12 @@ class LichTuVan(models.Model):
 
 
 class PhieuTuVan(models.Model):
+    TRANG_THAI_CHOICES = [
+        ('cho_phan_hoi', 'Chờ phản hồi'),
+        ('da_phan_hoi', 'Đã phản hồi'),
+        ('da_huy', 'Đã hủy'),
+    ]
+    
     sinh_vien = models.ForeignKey(SinhVien, on_delete=models.CASCADE)
     covan = models.ForeignKey(CoVan, on_delete=models.CASCADE)
 
@@ -28,6 +34,7 @@ class PhieuTuVan(models.Model):
     thoi_gian = models.DateTimeField()
     noi_dung_tu_van = models.TextField()
     ket_qua = models.TextField(blank=True)
+    trang_thai = models.CharField(max_length=20, choices=TRANG_THAI_CHOICES, default='cho_phan_hoi')
 
     class Meta:
         db_table = 'phieu_tu_van'

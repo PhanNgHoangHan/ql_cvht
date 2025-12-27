@@ -19,7 +19,7 @@ class CoVan(models.Model):
         related_name='ds_covan'
     )
 
-    lop = models.OneToOneField(   # 🔥 mỗi lớp chỉ 1 cố vấn
+    lop = models.OneToOneField(  
         Lop,
         on_delete=models.CASCADE,
         related_name='covan'

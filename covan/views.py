@@ -21,11 +21,12 @@ def dashboard(request):
     tong_sinh_vien = SinhVien.objects.filter(lop=covan.lop).count()
     phieu_cho_phan_hoi = PhieuTuVan.objects.filter(
         covan=covan, 
-        ket_qua__isnull=True
+        trang_thai='cho_phan_hoi'
     ).count()
     
     danh_gia_moi = DanhGia.objects.filter(
-        phieu__covan=covan
+        phieu__covan=covan,
+        phieu__trang_thai__in=['cho_phan_hoi', 'da_phan_hoi']  # Loại bỏ đánh giá từ phiếu đã hủy
     ).order_by('-id')[:5]
     
     context = {
@@ -54,16 +55,16 @@ def lich_tu_van_covan_view(request):
     """Lịch tư vấn của cố vấn - hiển thị phiếu tư vấn chờ phản hồi và lịch sử"""
     covan = request.user.covan
     
-    # Phiếu tư vấn chờ phản hồi
+    # Phiếu tư vấn chờ phản hồi (chỉ cần kiểm tra trạng thái)
     phieu_cho_phan_hoi = PhieuTuVan.objects.filter(
         covan=covan,
-        ket_qua__isnull=True
+        trang_thai='cho_phan_hoi'  # Chỉ lấy những phiếu chờ phản hồi
     ).select_related('sinh_vien', 'lich_tu_van').order_by('-thoi_gian')
     
-    # Lịch sử phản hồi
+    # Lịch sử phản hồi (đã phản hồi)
     lich_su_phan_hoi = PhieuTuVan.objects.filter(
         covan=covan,
-        ket_qua__isnull=False
+        trang_thai='da_phan_hoi'
     ).select_related('sinh_vien', 'lich_tu_van').order_by('-thoi_gian')
     
     context = {
@@ -71,6 +72,7 @@ def lich_tu_van_covan_view(request):
         'lich_su_phan_hoi': lich_su_phan_hoi,
         'covan': covan
     }
+    
     return render(request, 'covan/lich_tu_van.html', context)
 
 @covan_required
@@ -78,14 +80,16 @@ def thong_bao_covan_view(request):
     """Thông báo cho cố vấn - lịch tư vấn và đánh giá từ sinh viên"""
     covan = request.user.covan
     
-    # Lịch tư vấn mới từ sinh viên
+    # Lịch tư vấn mới từ sinh viên (chỉ những phiếu chưa bị hủy)
     lich_tu_van_moi = PhieuTuVan.objects.filter(
-        covan=covan
+        covan=covan,
+        trang_thai__in=['cho_phan_hoi', 'da_phan_hoi']  # Loại bỏ phiếu đã hủy
     ).select_related('sinh_vien').order_by('-thoi_gian')[:10]
     
-    # Đánh giá từ sinh viên
+    # Đánh giá từ sinh viên (chỉ từ phiếu chưa bị hủy)
     danh_gia_sinh_vien = DanhGia.objects.filter(
-        phieu__covan=covan
+        phieu__covan=covan,
+        phieu__trang_thai__in=['cho_phan_hoi', 'da_phan_hoi']  # Loại bỏ đánh giá từ phiếu đã hủy
     ).select_related('phieu__sinh_vien').order_by('-id')[:10]
     
     context = {
@@ -134,9 +138,10 @@ def thong_ke_covan_view(request):
     
     print(f"Debug - Thống kê lớp: Có môn chưa đạt={sinh_vien_chua_dat}, Đạt tất cả={sinh_vien_dat_tat_ca}")
     
-    # Thống kê điểm đánh giá trung bình
+    # Thống kê điểm đánh giá trung bình (chỉ từ phiếu chưa bị hủy)
     diem_danh_gia_tb = DanhGia.objects.filter(
-        phieu__covan=covan
+        phieu__covan=covan,
+        phieu__trang_thai__in=['cho_phan_hoi', 'da_phan_hoi']  # Loại bỏ đánh giá từ phiếu đã hủy
     ).aggregate(tb=Avg('diem_danh_gia'))['tb'] or 0
     
     # Danh sách học kỳ
@@ -172,6 +177,7 @@ def phan_hoi_phieu_tu_van(request, phieu_id):
         ket_qua = request.POST.get('ket_qua')
         if ket_qua:
             phieu.ket_qua = ket_qua
+            phieu.trang_thai = 'da_phan_hoi'  # Cập nhật trạng thái khi phản hồi
             phieu.save()
             return redirect('covan:lich_tu_van')
     

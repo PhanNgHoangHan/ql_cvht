@@ -38,15 +38,26 @@
                                 <td>{{ phieu.lich_tu_van.dia_diem }}</td>
                                 <td>{{ phieu.noi_dung_tu_van|truncatechars:50 }}</td>
                                 <td>
-                                    {% if phieu.ket_qua %}
+                                    {% if phieu.trang_thai == 'da_huy' %}
+                                        <span class="badge bg-secondary">Đã hủy</span>
+                                    {% elif phieu.ket_qua %}
                                         <span class="badge bg-success">Đã phản hồi</span>
                                     {% else %}
                                         <span class="badge bg-warning">Chờ phản hồi</span>
                                     {% endif %}
                                 </td>
                                 <td>
-                                    {% if phieu.ket_qua %}
-                                        <a href="{% url 'tuvantuvan:danh_gia' phieu.id %}" class="btn btn-sm btn-info">Đánh giá</a>
+                                    {% if phieu.trang_thai == 'da_huy' %}
+                                        <span class="text-muted">Đã hủy</span>
+                                    {% elif phieu.ket_qua %}
+                                        <a href="{% url 'tuvantuvan:danh_gia' phieu.id %}" class="btn btn-sm btn-info">
+                                            <i class="bi bi-star me-1"></i>Đánh giá
+                                        </a>
+                                    {% else %}
+                                        <a href="{% url 'tuvantuvan:huy_lich' phieu.id %}" class="btn btn-sm btn-danger" 
+                                           onclick="return confirm('Bạn có chắc chắn muốn hủy lịch tư vấn này?')">
+                                            <i class="bi bi-x-circle me-1"></i>Hủy lịch
+                                        </a>
                                     {% endif %}
                                 </td>
                             </tr>
