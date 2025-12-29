@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+
+{% block title %}Lịch tư vấn{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h2>Lịch tư vấn của tôi</h2>
+        <a href="{% url 'tuvantuvan:dang_ky_lich' %}" class="btn btn-primary mb-3">Đăng ký lịch mới</a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5>Danh sách phiếu tư vấn</h5>
+            </div>
+            <div class="card-body">
+                {% if phieu_tu_van %}
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Thời gian</th>
+                                <th>Cố vấn</th>
+                                <th>Địa điểm</th>
+                                <th>Nội dung</th>
+                                <th>Phản hồi</th>
+                                <th>Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for phieu in phieu_tu_van %}
+                            <tr>
+                                <td>{{ phieu.thoi_gian|date:"d/m/Y H:i" }}</td>
+                                <td>{{ phieu.covan.ho_ten }}</td>
+                                <td>{{ phieu.lich_tu_van.dia_diem }}</td>
+                                <td>{{ phieu.noi_dung_tu_van|truncatechars:50 }}</td>
+                                <td>
+                                    {% if phieu.trang_thai == 'da_huy' %}
+                                        <span class="badge bg-secondary">Đã hủy</span>
+                                    {% elif phieu.ket_qua %}
+                                        <span class="badge bg-success">Đã phản hồi</span>
+                                    {% else %}
+                                        <span class="badge bg-warning">Chờ phản hồi</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if phieu.trang_thai == 'da_huy' %}
+                                        <span class="text-muted">Đã hủy</span>
+                                    {% elif phieu.ket_qua %}
+                                        <a href="{% url 'tuvantuvan:danh_gia' phieu.id %}" class="btn btn-sm btn-info">
+                                            <i class="bi bi-star me-1"></i>Đánh giá
+                                        </a>
+                                    {% else %}
+                                        <a href="{% url 'tuvantuvan:huy_lich' phieu.id %}" class="btn btn-sm btn-danger" 
+                                           onclick="return confirm('Bạn có chắc chắn muốn hủy lịch tư vấn này?')">
+                                            <i class="bi bi-x-circle me-1"></i>Hủy lịch
+                                        </a>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p class="text-muted">Chưa có phiếu tư vấn nào.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if danh_gia %}
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5>Lịch sử đánh giá</h5>
+            </div>
+            <div class="card-body">
+                {% for dg in danh_gia %}
+                <div class="mb-3 p-3 border rounded">
+                    <strong>Phiếu tư vấn ngày {{ dg.phieu.thoi_gian|date:"d/m/Y" }}</strong><br>
+                    <span class="badge bg-primary">{{ dg.diem_danh_gia }}/5 điểm</span><br>
+                    <small class="text-muted">{{ dg.nhan_xet }}</small>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

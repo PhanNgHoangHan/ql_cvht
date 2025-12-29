@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block title %}Thông báo{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h2>Thông báo phản hồi từ cố vấn</h2>
+    </div>
+</div>
+
+<div class="row mt-3">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5>Phiếu tư vấn đã có phản hồi</h5>
+            </div>
+            <div class="card-body">
+                {% if phieu_co_phan_hoi %}
+                {% for phieu in phieu_co_phan_hoi %}
+                <div class="mb-4 p-3 border rounded">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <h6><strong>Phiếu tư vấn ngày {{ phieu.thoi_gian|date:"d/m/Y H:i" }}</strong></h6>
+                            <p><strong>Cố vấn:</strong> {{ phieu.covan.ho_ten }}</p>
+                            <p><strong>Nội dung tư vấn:</strong> {{ phieu.noi_dung_tu_van }}</p>
+                            <div class="alert alert-success">
+                                <strong>Phản hồi từ cố vấn:</strong><br>
+                                {{ phieu.ket_qua }}
+                            </div>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <a href="{% url 'tuvantuvan:danh_gia' phieu.id %}" class="btn btn-primary">Đánh giá</a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+                {% else %}
+                <p class="text-muted">Chưa có phản hồi nào từ cố vấn.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h2>Chào mừng đến với Hệ thống Quản lý Cố vấn Học tập</h2>
+        <p class="text-muted">Bạn chưa được phân quyền vào hệ thống. Vui lòng liên hệ quản trị viên.</p>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5>Hướng dẫn sử dụng</h5>
+            </div>
+            <div class="card-body">
+                <ul>
+                    <li><strong>Sinh viên:</strong> Đăng nhập để xem thông tin cá nhân, đăng ký lịch tư vấn và xem thống kê học tập</li>
+                    <li><strong>Cố vấn:</strong> Đăng nhập để quản lý sinh viên, tạo lịch tư vấn và xem báo cáo</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

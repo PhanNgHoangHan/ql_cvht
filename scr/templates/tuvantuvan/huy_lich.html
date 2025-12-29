@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+
+{% block title %}Hủy lịch tư vấn{% endblock %}
+
+{% block page_title %}Hủy lịch tư vấn{% endblock %}
+{% block page_subtitle %}Xác nhận hủy lịch tư vấn{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-warning text-white">
+                <h5 class="mb-0">
+                    <i class="bi bi-exclamation-triangle me-2"></i>Xác nhận hủy lịch tư vấn
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-warning">
+                    <i class="bi bi-info-circle me-2"></i>
+                    <strong>Lưu ý:</strong> Bạn chỉ có thể hủy lịch tư vấn khi cố vấn chưa phản hồi.
+                </div>
+                
+                <h6>Thông tin lịch tư vấn:</h6>
+                <div class="row">
+                    <div class="col-md-6">
+                        <table class="table table-borderless">
+                            <tr>
+                                <td width="120"><strong>Thời gian:</strong></td>
+                                <td>{{ phieu.thoi_gian|date:"d/m/Y H:i" }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Cố vấn:</strong></td>
+                                <td>{{ phieu.covan.ho_ten }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Địa điểm:</strong></td>
+                                <td>{{ phieu.lich_tu_van.dia_diem }}</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label"><strong>Nội dung tư vấn:</strong></label>
+                            <div class="border rounded p-2 bg-light">
+                                {{ phieu.noi_dung_tu_van }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <hr>
+                
+                <div class="text-center">
+                    <p class="text-danger mb-3">
+                        <i class="bi bi-exclamation-triangle me-1"></i>
+                        <strong>Bạn có chắc chắn muốn hủy lịch tư vấn này không?</strong>
+                    </p>
+                    
+                    <form method="POST" class="d-inline">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger me-2">
+                            <i class="bi bi-x-circle me-1"></i>Xác nhận hủy
+                        </button>
+                    </form>
+                    
+                    <a href="{% url 'tuvantuvan:lich_tu_van_sinhvien' %}" class="btn btn-secondary">
+                        <i class="bi bi-arrow-left me-1"></i>Quay lại
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
