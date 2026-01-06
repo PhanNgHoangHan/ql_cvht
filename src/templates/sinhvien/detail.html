@@ -1,0 +1,184 @@
+{% extends 'base.html' %}
+
+{% block title %}Thông tin cá nhân{% endblock %}
+
+{% block page_title %}Thông tin cá nhân{% endblock %}
+{% block page_subtitle %}{{ sinhvien.ho_ten }} - {{ sinhvien.ma_sv }}{% endblock %}
+
+{% block content %}
+
+<div class="row">
+    <div class="col-lg-6 mb-4">
+        <div class="card h-100">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-person-circle me-2"></i>Thông tin cá nhân</h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-sm-6">
+                        <label class="form-label text-muted">Mã sinh viên</label>
+                        <p class="fw-bold mb-0">{{ sinhvien.ma_sv }}</p>
+                    </div>
+                    <div class="col-sm-6">
+                        <label class="form-label text-muted">Họ tên</label>
+                        <p class="fw-bold mb-0">{{ sinhvien.ho_ten }}</p>
+                    </div>
+                    <div class="col-sm-6">
+                        <label class="form-label text-muted">Ngày sinh</label>
+                        <p class="mb-0">{{ sinhvien.ngay_sinh|date:"d/m/Y"|default:"Chưa cập nhật" }}</p>
+                    </div>
+                    <div class="col-sm-6">
+                        <label class="form-label text-muted">Giới tính</label>
+                        <p class="mb-0">{{ sinhvien.gioi_tinh }}</p>
+                    </div>
+                    <div class="col-sm-6">
+                        <label class="form-label text-muted">Email</label>
+                        <p class="mb-0">{{ sinhvien.email }}</p>
+                    </div>
+                    <div class="col-sm-6">
+                        <label class="form-label text-muted">Điện thoại</label>
+                        <p class="mb-0">{{ sinhvien.dien_thoai }}</p>
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label text-muted">Lớp</label>
+                        <p class="mb-0">
+                            <span class="badge bg-primary fs-6">{{ sinhvien.lop.ten_lop }}</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-6 mb-4">
+        <div class="card h-100">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-graph-up me-2"></i>Điểm học tập</h5>
+            </div>
+            <div class="card-body">
+                {% if diem_hoc_tap %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Học kỳ</th>
+                                <th class="text-center">Điểm TB</th>
+                                <th class="text-center">Xếp loại</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for dht in diem_hoc_tap %}
+                            <tr>
+                                <td class="fw-semibold">{{ dht.hoc_ky }}</td>
+                                <td class="text-center">
+                                    <span class="badge bg-light text-dark">{{ dht.diem_trung_binh }}</span>
+                                </td>
+                                <td class="text-center">
+                                    <span class="badge 
+                                        {% if dht.xep_loai == 'Xuất sắc' %}bg-success
+                                        {% elif dht.xep_loai == 'Giỏi' %}bg-info
+                                        {% elif dht.xep_loai == 'Khá' %}bg-primary
+                                        {% elif dht.xep_loai == 'Trung bình' %}bg-warning
+                                        {% else %}bg-danger{% endif %}">
+                                        {{ dht.xep_loai }}
+                                    </span>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center py-4">
+                    <i class="bi bi-graph-up text-muted" style="font-size: 3rem;"></i>
+                    <p class="text-muted mt-2 mb-0">Chưa có điểm học tập</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-award me-2"></i>Điểm rèn luyện</h5>
+            </div>
+            <div class="card-body">
+                {% if diem_ren_luyen %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Học kỳ</th>
+                                <th class="text-center">Điểm rèn luyện</th>
+                                <th class="text-center">Xếp loại</th>
+                                <th>Ghi chú</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for drl in diem_ren_luyen %}
+                            <tr>
+                                <td class="fw-semibold">{{ drl.hoc_ky }}</td>
+                                <td class="text-center">
+                                    <span class="badge 
+                                        {% if drl.diem_ren_luyen >= 90 %}bg-success
+                                        {% elif drl.diem_ren_luyen >= 80 %}bg-info
+                                        {% elif drl.diem_ren_luyen >= 70 %}bg-primary
+                                        {% elif drl.diem_ren_luyen >= 60 %}bg-warning
+                                        {% else %}bg-danger{% endif %}">
+                                        {{ drl.diem_ren_luyen }}
+                                    </span>
+                                </td>
+                                <td class="text-center">
+                                    <span class="badge 
+                                        {% if drl.xep_loai == 'Xuất sắc' %}bg-success
+                                        {% elif drl.xep_loai == 'Tốt' %}bg-info
+                                        {% elif drl.xep_loai == 'Khá' %}bg-primary
+                                        {% elif drl.xep_loai == 'Trung bình' %}bg-warning
+                                        {% else %}bg-danger{% endif %}">
+                                        {{ drl.xep_loai }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <small class="text-muted">{{ drl.ghi_chu|default:"Không có ghi chú" }}</small>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center py-4">
+                    <i class="bi bi-award text-muted" style="font-size: 3rem;"></i>
+                    <p class="text-muted mt-2 mb-0">Chưa có điểm rèn luyện</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="btn-group-responsive">
+            <a href="{% url 'sinhvien:ket_qua_hoc_tap' sinhvien.pk %}" class="btn btn-primary">
+                <i class="bi bi-file-text me-1"></i>Xem kết quả học tập
+            </a>
+            <a href="{% url 'sinhvien:thong_ke' sinhvien.pk %}" class="btn btn-info">
+                <i class="bi bi-graph-up me-1"></i>Xem thống kê
+            </a>
+            {% if is_sinhvien %}
+            <a href="{% url 'sinhvien:list' %}" class="btn btn-secondary">
+                <i class="bi bi-arrow-left me-1"></i>Quay lại
+            </a>
+            {% elif is_covan %}
+            <a href="{% url 'covan:sinhvien_list' %}" class="btn btn-secondary">
+                <i class="bi bi-arrow-left me-1"></i>Quay lại danh sách
+            </a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

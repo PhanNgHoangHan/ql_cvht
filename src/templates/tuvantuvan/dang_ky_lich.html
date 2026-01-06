@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block title %}Đăng ký lịch tư vấn{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h2>Đăng ký lịch tư vấn</h2>
+        <p class="text-muted">Cố vấn: {{ covan.ho_ten }}</p>
+    </div>
+</div>
+
+<div class="row mt-3">
+    <div class="col-md-8">
+        <form method="POST">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label class="form-label">Chọn lịch tư vấn:</label>
+                <select name="lich_tu_van" class="form-select" required>
+                    <option value="">-- Chọn lịch --</option>
+                    {% for lich in lich_tu_van_list %}
+                    <option value="{{ lich.id }}">
+                        {{ lich.thoi_gian|date:"d/m/Y H:i" }} - {{ lich.dia_diem }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="mb-3">
+                <label class="form-label">Nội dung tư vấn:</label>
+                <textarea name="noi_dung_tu_van" class="form-control" rows="4" required 
+                          placeholder="Mô tả vấn đề cần tư vấn..."></textarea>
+            </div>
+            
+            <button type="submit" class="btn btn-primary">Đăng ký</button>
+            <a href="{% url 'tuvantuvan:lich_tu_van_sinhvien' %}" class="btn btn-secondary">Hủy</a>
+        </form>
+    </div>
+</div>
+{% endblock %}

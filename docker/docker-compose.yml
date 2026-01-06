@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  # Django Web Application - Kết nối với MySQL local
+  web:
+    build: .
+    container_name: cvht_web
+    restart: always
+    ports:
+      - "8000:8000"
+    environment:
+      - DEBUG=True
+      - DB_HOST=host.docker.internal  # Kết nối với MySQL local
+      - DB_PORT=3307  # Port MySQL Workbench của bạn
+      - DB_NAME=cvht_db
+      - DB_USER=root  # User MySQL local của bạn
+      - DB_PASSWORD=Nhanh1234@  # Password MySQL local của bạn
+    volumes:
+      - ./static:/app/static
+      - ./media:/app/media
+    networks:
+      - cvht_network
+    extra_hosts:
+      - "host.docker.internal:host-gateway"  # Cho phép kết nối với host
+
+  # phpMyAdmin - Kết nối với MySQL local
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: cvht_phpmyadmin
+    restart: always
+    ports:
+      - "8080:80"
+    environment:
+      PMA_HOST: host.docker.internal  # Kết nối với MySQL local
+      PMA_PORT: 3307  # Port MySQL local
+      PMA_USER: root
+      PMA_PASSWORD: Nhanh1234@
+    networks:
+      - cvht_network
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+networks:
+  cvht_network:
+    driver: bridge

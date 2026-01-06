@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    {% if is_covan %}Danh sách sinh viên{% else %}Thông tin cá nhân{% endif %}
+{% endblock %}
+
+{% block page_title %}
+    {% if is_covan %}
+        Danh sách sinh viên
+    {% else %}
+        Thông tin cá nhân
+    {% endif %}
+{% endblock %}
+
+{% block page_subtitle %}
+    {% if is_covan %}
+        Lớp {{ lop.ten_lop }} - {{ sinhviens|length }} sinh viên
+    {% else %}
+        Xem thông tin chi tiết của bạn
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="bi bi-people me-2"></i>
+                    {% if is_covan %}
+                        Danh sách sinh viên lớp {{ lop.ten_lop }}
+                    {% else %}
+                        Thông tin cá nhân
+                    {% endif %}
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if sinhviens %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th width="12%">Mã SV</th>
+                                <th width="20%">Họ tên</th>
+                                <th width="25%">Email</th>
+                                <th width="15%">Điện thoại</th>
+                                <th width="15%">Lớp</th>
+                                <th width="13%" class="text-center">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for sv in sinhviens %}
+                            <tr>
+                                <td class="fw-semibold">{{ sv.ma_sv }}</td>
+                                <td>{{ sv.ho_ten }}</td>
+                                <td>
+                                    <small class="text-muted">{{ sv.email }}</small>
+                                </td>
+                                <td>{{ sv.dien_thoai }}</td>
+                                <td>
+                                    <span class="badge bg-primary">{{ sv.lop.ten_lop }}</span>
+                                </td>
+                                <td>
+                                    <div class="btn-group-sm d-flex flex-wrap gap-1 justify-content-center" role="group">
+                                        <a href="{% url 'sinhvien:detail' sv.pk %}" class="btn btn-sm btn-info" title="Xem chi tiết">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                        <a href="{% url 'sinhvien:ket_qua_hoc_tap' sv.pk %}" class="btn btn-sm btn-success" title="Kết quả học tập">
+                                            <i class="bi bi-file-text"></i>
+                                        </a>
+                                        <a href="{% url 'sinhvien:thong_ke' sv.pk %}" class="btn btn-sm btn-warning" title="Thống kê">
+                                            <i class="bi bi-graph-up"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center py-5">
+                    <i class="bi bi-people text-muted" style="font-size: 3rem;"></i>
+                    <h5 class="text-muted mt-3">Không có sinh viên nào</h5>
+                    <p class="text-muted">Danh sách sinh viên trống</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
